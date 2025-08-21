@@ -1,5 +1,6 @@
 <?php
 
+  
   include_once("conn.php");
 
   $method = $_SERVER['REQUEST_METHOD'];
@@ -59,9 +60,8 @@
       // resgatando nome dos sabors
       $saboresDaPizza = [];
 
-      $saboresQuery = $conn->prepare("SELECT * FROM sabores WHERE id = :sabor_id");
-
       foreach($sabores as $sabor) {
+        $saboresQuery = $conn->prepare("SELECT * FROM sabores WHERE id = :sabor_id");
         $saboresQuery->bindParam(':sabor_id', $sabor['sabor_id']);
         $saboresQuery->execute();
 
@@ -83,5 +83,39 @@
 
     $status = $statusQuery->fetchAll();
 
-  } else if ($method === "POST") {}
+  } else if ($method === "POST") {
+    // verificando tipo de POST
+    $type = $_POST["type"];
+
+
+    if ($type === "delete") {
+
+    $pizzaId = $_POST["id"]; 
+
+    $deleteQuery = $conn->prepare("DELETE FROM pedidos WHERE pizza_id = :pizza_id");
+    $deleteQuery->bindParam(':pizza_id', $pizzaId, PDO::PARAM_INT);
+    $deleteQuery->execute();
+
+    $_SESSION['msg'] = "Pedido cancelado com sucesso!";
+    $_SESSION['status'] = "success";
+
+  } else if ($type === "update") {
+
+    $pizzaId = $_POST["id"];
+    $statusId = $_POST["status"];
+
+    $updateQuery = $conn->prepare("UPDATE pedidos SET status_id = :status_id WHERE pizza_id = :pizza_id");
+    $updateQuery->bindParam(':status_id', $statusId, PDO::PARAM_INT);
+    $updateQuery->bindParam(':pizza_id', $pizzaId, PDO::PARAM_INT);
+    $updateQuery->execute();
+
+    $_SESSION['msg'] = "Status do pedido atualizado com sucesso!";
+    $_SESSION['status'] = "success";
+
+  }
+  // retorna usuário para dashboard
+  header("Location: ../dashboard.php");
+  
+}
+
 ?>
