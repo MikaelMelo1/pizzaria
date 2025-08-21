@@ -37,8 +37,8 @@ if ($method == "GET") {
 
         $stmt = $conn->prepare("INSERT INTO pizza_sabor (pizza_id, sabor_id) VALUES (:pizza, :sabor)");
         foreach($sabores as $sabor) {
-            $stmt->bindParam(":pizza", $pizzaId, PDO::PARAM_INT);
-            $stmt->bindParam(":sabor", $sabor, PDO::PARAM_INT);
+            $stmt->bindValue(":pizza", $pizzaId, PDO::PARAM_INT);
+            $stmt->bindValue(":sabor", $sabor, PDO::PARAM_INT);
             $stmt->execute();
         }
 
